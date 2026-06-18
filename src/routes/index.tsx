@@ -1,17 +1,29 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { createThread, loadThreads, saveThreads } from "@/lib/threads";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: () => {
-    if (typeof window === "undefined") return;
-    const threads = loadThreads();
-    if (threads.length > 0) {
-      const newest = [...threads].sort((a, b) => b.updatedAt - a.updatedAt)[0];
-      throw redirect({ to: "/$threadId", params: { threadId: newest.id } });
-    }
-    const t = createThread();
-    saveThreads([t]);
-    throw redirect({ to: "/$threadId", params: { threadId: t.id } });
-  },
-  component: () => null,
+  component: IndexRedirect,
 });
+
+function IndexRedirect() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const threads = loadThreads();
+    let targetId: string;
+    if (threads.length > 0) {
+      targetId = [...threads].sort((a, b) => b.updatedAt - a.updatedAt)[0].id;
+    } else {
+      const t = createThread();
+      saveThreads([t]);
+      targetId = t.id;
+    }
+    navigate({ to: "/$threadId", params: { threadId: targetId }, replace: true });
+  }, [navigate]);
+
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-background text-muted-foreground">
+      Loading…
+    </div>
+  );
+}
