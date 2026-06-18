@@ -1,14 +1,9 @@
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Trash2, Sparkles } from "lucide-react";
-import { createThread, deleteIfEmpty, loadThreads, saveThreads, type Thread } from "@/lib/threads";
+import { createThread, loadThreads, saveThreads, type Thread } from "@/lib/threads";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
-
-// Re-export helper not in threads.ts — inline:
-function noop() {}
-void noop;
-void deleteIfEmpty;
 
 export function ThreadSidebar({ activeId }: { activeId: string }) {
   const navigate = useNavigate();
